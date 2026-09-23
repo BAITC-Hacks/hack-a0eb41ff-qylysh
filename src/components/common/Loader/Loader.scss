@@ -1,0 +1,24 @@
+@use '../../../styles/variables' as *;
+
+.loader {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  color: $text-secondary;
+  font-size: 13px;
+
+  &__spinner {
+    width: 17px;
+    height: 17px;
+    border: 2px solid $border-strong;
+    border-top-color: $accent;
+    border-radius: 50%;
+    animation: loader-spin 700ms linear infinite;
+  }
+}
+
+@keyframes loader-spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .loader__spinner { animation-duration: 2s; }
+}

@@ -1,0 +1,65 @@
+@use '../../styles/variables' as *;
+
+.network-page {
+  &__selected {
+    display: inline-flex;
+    gap: 6px;
+    margin-top: 29px;
+    border: 1px solid $accent-border;
+    border-radius: $radius-sm;
+    padding: 9px 12px;
+    color: $text-secondary;
+    background: $accent-soft;
+    font-size: 12px;
+
+    strong { color: $accent; font-weight: 650; }
+  }
+
+  &__workspace {
+    display: flex;
+    flex-direction: column;
+    min-height: min(540px, 62vh);
+    margin-top: 34px;
+    border: 1px solid $border-color;
+    border-radius: $radius-md;
+    background: $bg-panel;
+  }
+
+  &__workspace-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 57px;
+    border-bottom: 1px solid $border-color;
+    padding: 0 22px;
+
+    h2 { margin: 0; color: $text-primary; font-size: 13px; font-weight: 600; }
+    span { color: $text-muted; font-size: 10px; font-weight: 700; letter-spacing: 0.13em; }
+  }
+
+  &__workspace-empty {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    padding: 30px;
+    text-align: center;
+
+    strong { color: $text-primary; font-size: 14px; font-weight: 600; }
+    p { margin: 8px 0 0; color: $text-muted; font-size: 12px; }
+  }
+
+  &__workspace-icon {
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 58px;
+    margin-bottom: 18px;
+    border: 1px solid $border-strong;
+    border-radius: $radius-md;
+    color: $text-secondary;
+    background: $bg-app;
+  }
+}
