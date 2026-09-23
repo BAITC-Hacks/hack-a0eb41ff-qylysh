@@ -1,6 +1,8 @@
 @use '../../styles/variables' as *;
 
 .overview-page {
+  > .loader, > .error-state, > .empty-state { margin-top: 40px; }
+  &__demo { display: inline-block; margin-top: 22px; border: 1px solid $warning; border-radius: 999px; padding: 5px 9px; color: $warning; font-size: 9px; font-weight: 700; letter-spacing: .12em; }
   &__section { margin-top: 52px; }
 
   &__section-heading {
@@ -20,12 +22,33 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 15px;
   }
+
+  &__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(420px, 1.25fr); gap: 16px; margin-top: 16px; }
+  &__panel, &__cluster { border: 1px solid $border-color; border-radius: $radius-md; background: $bg-panel; }
+  &__panel { padding: 22px; h2 { margin: 0; font-size: 14px; } }
+  &__panel-title { display: flex; justify-content: space-between; align-items: center; a { color: $accent; font-size: 12px; } }
+  &__roles { display: grid; gap: 14px; margin-top: 20px; }
+  &__role > div:first-child { display: flex; justify-content: space-between; color: $text-secondary; font-size: 11px; strong { color: $text-primary; } }
+  &__bar { height: 5px; margin-top: 7px; overflow: hidden; border-radius: 5px; background: $bg-app; span { display: block; height: 100%; background: $role-peripheral; } }
+  &__role--coordinator .overview-page__bar span { background: $role-coordinator; }
+  &__role--consolidator .overview-page__bar span { background: $role-consolidator; }
+  &__role--distributor .overview-page__bar span { background: $role-distributor; }
+  &__role--transit .overview-page__bar span { background: $role-transit; }
+  &__role--terminal .overview-page__bar span { background: $role-terminal; }
+  &__list { margin-top: 12px; }
+  &__row { display: grid; grid-template-columns: 28px 1fr 110px 45px; align-items: center; gap: 8px; border-top: 1px solid $border-color; padding: 12px 0; color: $text-muted; font-size: 11px; text-decoration: none; strong { color: $text-primary; } b { color: $accent; text-align: right; } &:focus-visible, &:hover { background: $bg-hover; } }
+  .role { font-style: normal; }
+  .role--coordinator { color: $role-coordinator; } .role--consolidator { color: $role-consolidator; } .role--distributor { color: $role-distributor; } .role--transit { color: $role-transit; } .role--terminal { color: $role-terminal; } .role--peripheral { color: $role-peripheral; }
+  &__clusters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+  &__cluster { display: flex; flex-direction: column; padding: 20px; color: inherit; text-decoration: none; span { color: $accent; font-size: 9px; letter-spacing: .12em; } strong { margin-top: 10px; font-size: 20px; } p { min-height: 40px; color: $text-secondary; font-size: 12px; line-height: 1.5; } small { color: $text-muted; } &:hover, &:focus-visible { border-color: $accent-border; background: $bg-hover; } }
 }
 
 @media (max-width: 1250px) {
   .overview-page__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .overview-page__grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 650px) {
   .overview-page__stats { grid-template-columns: 1fr; }
+  .overview-page__clusters { grid-template-columns: 1fr; }
 }

@@ -69,4 +69,4 @@ The API router uses `/api/v1`; domain routes have not been added.
 
 ## Naming conventions
 
-Python fields and JSON use snake_case. Core names are `gid`, `role`, `role_score`, `priority_score`, `cluster_id`, and `evidence`. The full field set is defined in `app/schemas/`.
+Python fields and the current schema JSON use snake_case. Core names are `gid`, `role`, `role_score`, `priority_score`, `cluster_id`, and `evidence`. The full field set is defined in `app/schemas/`. The planned `GET /api/v1/summary` response is an explicit exception: its external JSON uses camelCase as specified in `../docs/INTEGRATION_PLAN.md`, while backend data keeps snake_case.

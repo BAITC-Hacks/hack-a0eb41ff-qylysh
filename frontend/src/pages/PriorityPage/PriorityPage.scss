@@ -1,1 +1,12 @@
-.priority-page__placeholder { margin-top: 36px; }
+@use '../../styles/variables' as *;
+.priority-page {
+  position: relative; > .loader, > .error-state, > .empty-state { margin-top: 28px; }
+  &__demo { display: inline-block; margin-top: 22px; border: 1px solid $warning; border-radius: 999px; padding: 5px 9px; color: $warning; font-size: 9px; font-weight: 700; letter-spacing: .12em; }
+  &__filters { display: flex; gap: 14px; margin-top: 25px; label { color: $text-muted; font-size: 10px; font-weight: 700; letter-spacing: .08em; } input, select { display: block; min-width: 190px; margin-top: 7px; border: 1px solid $border-color; border-radius: $radius-sm; padding: 10px 12px; color: $text-primary; background: $bg-panel; } }
+  &__table-wrap { margin-top: 20px; overflow-x: auto; border: 1px solid $border-color; border-radius: $radius-md; }
+  table { width: 100%; border-collapse: collapse; background: $bg-panel; font-size: 11px; } th { padding: 12px; color: $text-muted; text-align: left; font-size: 9px; letter-spacing: .1em; } td { max-width: 280px; border-top: 1px solid $border-color; padding: 12px; color: $text-secondary; line-height: 1.4; } td button { border: 0; color: $accent; background: transparent; cursor: pointer; font-weight: 700; } td a { color: $accent; }
+  .role--coordinator { color: $role-coordinator; } .role--consolidator { color: $role-consolidator; } .role--distributor { color: $role-distributor; } .role--transit { color: $role-transit; } .role--terminal { color: $role-terminal; } .role--peripheral { color: $role-peripheral; }
+  &__pagination { display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin-top: 14px; color: $text-muted; font-size: 11px; span { margin-right: auto; } button { border: 1px solid $border-color; border-radius: $radius-sm; padding: 7px 10px; color: $text-primary; background: $bg-panel; cursor: pointer; &:disabled { opacity: .35; cursor: default; } } }
+  &__detail { position: fixed; z-index: 5; top: $header-height; right: 0; bottom: 0; width: min(390px, 90vw); overflow: auto; border-left: 1px solid $accent-border; padding: 30px; background: $bg-sidebar; box-shadow: -20px 0 50px rgba(0,0,0,.3); > button { float: right; border: 0; color: $text-muted; background: transparent; cursor: pointer; font-size: 24px; } > span { color: $accent; font-size: 9px; letter-spacing: .12em; } h2 { margin: 12px 0; } p { color: $text-secondary; font-size: 12px; line-height: 1.6; } dl div { display: flex; justify-content: space-between; border-top: 1px solid $border-color; padding: 11px 0; font-size: 12px; } dt { color: $text-muted; } dd { margin: 0; } > a { color: $accent; font-size: 12px; } }
+}
+@media (max-width: 650px) { .priority-page__filters { flex-direction: column; } }

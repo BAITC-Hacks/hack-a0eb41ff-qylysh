@@ -11,3 +11,15 @@
   font-size: 14px;
   line-height: 1.7;
 }
+
+.methodology-page {
+  &__note h2, &__section > h2 { margin-top: 0; color: $text-primary; font-size: 16px; }
+  &__note p { margin-bottom: 0; }
+  &__section { max-width: 900px; margin-top: 32px; }
+  &__roles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  &__role { display: flex; gap: 14px; border: 1px solid $border-color; border-radius: $radius-md; padding: 18px; background: $bg-panel; > span { color: $role-peripheral; font-size: 11px; } h3 { margin: 0; font-size: 13px; } p { margin: 7px 0 0; color: $text-secondary; font-size: 12px; line-height: 1.55; } }
+  &__role--0 > span { color: $role-coordinator; } &__role--1 > span { color: $role-consolidator; } &__role--2 > span { color: $role-distributor; } &__role--3 > span { color: $role-transit; } &__role--4 > span { color: $role-terminal; }
+  &__scores { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; > h2 { grid-column: 1 / -1; } article { border-left: 3px solid $accent; padding: 4px 18px; h3 { margin: 0; font-size: 13px; } p { color: $text-secondary; font-size: 12px; line-height: 1.6; } } }
+  ol { padding-left: 22px; color: $text-secondary; font-size: 13px; line-height: 2; li::marker { color: $accent; font-weight: 700; } }
+}
+@media (max-width: 700px) { .methodology-page__roles, .methodology-page__scores { grid-template-columns: 1fr; } }

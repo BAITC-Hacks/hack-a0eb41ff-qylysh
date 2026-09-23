@@ -1,1 +1,8 @@
-.clusters-page__placeholder { margin-top: 36px; }
+@use '../../styles/variables' as *;
+.clusters-page {
+  > .loader, > .error-state, > .empty-state { margin-top: 36px; }
+  &__demo { display: inline-block; margin-top: 22px; border: 1px solid $warning; border-radius: 999px; padding: 5px 9px; color: $warning; font-size: 9px; font-weight: 700; letter-spacing: .12em; }
+  &__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 25px; }
+  &__card { border: 1px solid $border-color; border-radius: $radius-md; padding: 24px; background: $bg-panel; > span { color: $accent; font-size: 9px; letter-spacing: .13em; } h2 { margin: 10px 0 8px; font-size: 23px; } > p, blockquote { color: $text-secondary; font-size: 12px; line-height: 1.6; } blockquote { margin: 16px 0; border-left: 2px solid $accent; padding-left: 12px; } dl { margin: 0 0 18px; } dl div { display: flex; justify-content: space-between; border-top: 1px solid $border-color; padding: 9px 0; font-size: 11px; } dt { color: $text-muted; } dd { margin: 0; } a { color: $accent; font-size: 12px; } }
+}
+@media (max-width: 850px) { .clusters-page__grid { grid-template-columns: 1fr; } }

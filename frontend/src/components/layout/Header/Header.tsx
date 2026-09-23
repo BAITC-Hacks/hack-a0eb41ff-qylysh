@@ -35,9 +35,9 @@ export default function Header() {
         <span className="header__dataset-copy"><small>DATASET</small><strong>July 2026</strong></span>
       </div>
       <div className="header__metrics" aria-label="Dataset metrics">
-        <span><strong>2,248</strong> clients</span>
+        <span><strong>July 2026</strong> observation</span>
         <span className="header__separator" aria-hidden="true" />
-        <span><strong>3,119</strong> relations</span>
+        <span><strong>4-hop</strong> boundary</span>
       </div>
       <SearchInput
         value={gid}

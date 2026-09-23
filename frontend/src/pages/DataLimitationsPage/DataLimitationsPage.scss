@@ -16,3 +16,9 @@
   li + li { border-top: 1px solid $border-color; }
   li::marker { color: $accent; }
 }
+
+.data-limitations-page {
+  &__callout { max-width: 820px; margin-top: 32px; border-left: 3px solid $warning; padding: 14px 18px; color: $warning; background: rgba($warning, .07); p { margin: 5px 0 0; color: $text-secondary; font-size: 12px; } }
+  &__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; max-width: 920px; margin-top: 22px; article { border: 1px solid $border-color; border-radius: $radius-md; padding: 20px; background: $bg-panel; > span { color: $accent; font-size: 9px; letter-spacing: .12em; } h2 { margin: 10px 0 7px; font-size: 14px; } p { margin: 0; color: $text-secondary; font-size: 12px; line-height: 1.6; } } }
+}
+@media (max-width: 700px) { .data-limitations-page__grid { grid-template-columns: 1fr; } }

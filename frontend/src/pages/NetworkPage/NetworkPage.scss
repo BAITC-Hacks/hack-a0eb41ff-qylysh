@@ -1,65 +1,13 @@
 @use '../../styles/variables' as *;
-
 .network-page {
-  &__selected {
-    display: inline-flex;
-    gap: 6px;
-    margin-top: 29px;
-    border: 1px solid $accent-border;
-    border-radius: $radius-sm;
-    padding: 9px 12px;
-    color: $text-secondary;
-    background: $accent-soft;
-    font-size: 12px;
-
-    strong { color: $accent; font-weight: 650; }
-  }
-
-  &__workspace {
-    display: flex;
-    flex-direction: column;
-    min-height: min(540px, 62vh);
-    margin-top: 34px;
-    border: 1px solid $border-color;
-    border-radius: $radius-md;
-    background: $bg-panel;
-  }
-
-  &__workspace-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    min-height: 57px;
-    border-bottom: 1px solid $border-color;
-    padding: 0 22px;
-
-    h2 { margin: 0; color: $text-primary; font-size: 13px; font-weight: 600; }
-    span { color: $text-muted; font-size: 10px; font-weight: 700; letter-spacing: 0.13em; }
-  }
-
-  &__workspace-empty {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    flex-direction: column;
-    justify-content: center;
-    padding: 30px;
-    text-align: center;
-
-    strong { color: $text-primary; font-size: 14px; font-weight: 600; }
-    p { margin: 8px 0 0; color: $text-muted; font-size: 12px; }
-  }
-
-  &__workspace-icon {
-    display: grid;
-    place-items: center;
-    width: 58px;
-    height: 58px;
-    margin-bottom: 18px;
-    border: 1px solid $border-strong;
-    border-radius: $radius-md;
-    color: $text-secondary;
-    background: $bg-app;
-  }
+  > .loader, > .error-state, > .empty-state { margin-top: 36px; }
+  &__demo { display: inline-block; margin-top: 22px; border: 1px solid $warning; border-radius: 999px; padding: 5px 9px; color: $warning; font-size: 9px; font-weight: 700; letter-spacing: .12em; }
+  &__prompt { display: flex; gap: 16px; align-items: center; margin-top: 36px; border: 1px solid $border-color; border-radius: $radius-md; padding: 25px; background: $bg-panel; color: $accent; strong { color: $text-primary; } p { margin: 5px 0 0; color: $text-muted; font-size: 12px; } }
+  &__selected { display: flex; align-items: center; gap: 6px; margin-top: 24px; color: $text-secondary; font-size: 12px; strong { color: $accent; } span { margin-left: auto; color: $text-muted; } }
+  &__boundary { margin-top: 12px; border-left: 3px solid $warning; padding: 8px 12px; color: $warning; background: rgba($warning, .07); font-size: 11px; }
+  &__workspace { position: relative; display: flex; min-height: min(610px, 68vh); flex-direction: column; margin-top: 16px; overflow: hidden; border: 1px solid $border-color; border-radius: $radius-md; background: $bg-panel; }
+  &__workspace-top { display: flex; align-items: center; justify-content: space-between; min-height: 56px; border-bottom: 1px solid $border-color; padding: 0 22px; h2 { margin: 0; font-size: 13px; } span { color: $text-muted; font-size: 9px; letter-spacing: .12em; } }
+  &__canvas { flex: 1; min-height: 500px; background: radial-gradient(circle at center, $bg-panel 0, $bg-app 100%); }
+  &__details { position: absolute; top: 74px; right: 18px; width: 220px; border: 1px solid $accent-border; border-radius: $radius-md; padding: 18px; background: rgba($bg-sidebar, .96); box-shadow: 0 16px 40px rgba(0,0,0,.35); > button { float: right; border: 0; color: $text-muted; background: transparent; cursor: pointer; font-size: 20px; } > span { color: $accent; font-size: 9px; letter-spacing: .12em; } h3 { margin: 10px 0 14px; } dl { margin: 0; } dl div { display: flex; justify-content: space-between; border-top: 1px solid $border-color; padding: 8px 0; font-size: 11px; } dt { color: $text-muted; } dd { margin: 0; color: $text-primary; } a { display: block; margin-top: 13px; color: $accent; font-size: 12px; } }
 }
+@media (max-width: 650px) { .network-page__selected { align-items: flex-start; flex-direction: column; span { margin-left: 0; } } }
