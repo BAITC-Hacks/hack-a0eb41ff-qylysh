@@ -1,5 +1,7 @@
 # MoneyGraph frontend implementation report
 
+This report records the original frontend handoff. The backend has since completed its API, and the current real-mode integration results are in [INTEGRATION_STATUS.md](INTEGRATION_STATUS.md).
+
 ## Scope
 
 All six chapters in `FRONTEND_PLAN.md` are implemented on the frontend. Domain screens run through an explicitly labelled mock service by default. `/summary` follows the frozen camelCase contract. DTOs for graph, nodes and clusters are frontend candidates pending backend/OpenAPI agreement.

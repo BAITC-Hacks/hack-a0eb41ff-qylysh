@@ -20,3 +20,11 @@ class GraphConstructionError(DatasetError):
 
 class FeatureEngineeringError(DatasetError):
     """Required graph attributes are missing or invalid for feature calculation."""
+
+
+class RoleAssignmentError(DatasetError):
+    """The feature table cannot be classified safely."""
+
+
+class AnalyticsError(DatasetError):
+    """A downstream analytical stage received inconsistent input."""

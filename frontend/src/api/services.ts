@@ -2,9 +2,9 @@ import { apiClient } from './client'
 import { endpoints } from './endpoints'
 import { demoClusters, demoNodes, demoSummary, localizeCluster, localizeNode, makeDemoGraph } from './mockData'
 import { fill, getDict } from '../i18n/i18n'
-import type { ClusterDetails, ClusterListResponse, GraphResponse, NodeDetails, NodeListResponse, Role, SummaryResponse } from '../types'
+import type { ClusterDetails, ClusterListResponse, Gid, GraphResponse, NodeDetails, NodeListResponse, Role, SummaryResponse } from '../types'
 
-export const isMockMode = import.meta.env.VITE_USE_MOCK_API !== 'false'
+export const isMockMode = import.meta.env.VITE_USE_MOCK_API === 'true'
 const mockScenario = import.meta.env.VITE_MOCK_SCENARIO ?? 'success'
 const mockDelay = () => new Promise((resolve) => setTimeout(resolve, 220))
 
@@ -19,29 +19,37 @@ export async function getSummary(): Promise<SummaryResponse> {
   return (await apiClient.get<SummaryResponse>(endpoints.SUMMARY)).data
 }
 
-export async function getGraph(type: 'gid' | 'cluster', id: number): Promise<GraphResponse> {
+export async function getGraph(focus: GraphResponse['focus']): Promise<GraphResponse> {
   if (isMockMode) {
-    if (mockScenario === 'error') return mock(makeDemoGraph(type, id))
-    if (mockScenario === 'empty') return mock({ focus: { type, id }, nodes: [], edges: [], truncatedAtDepth: null })
-    await mockDelay(); return makeDemoGraph(type, id)
+    if (mockScenario === 'error') return mock(makeDemoGraph(focus))
+    if (mockScenario === 'empty') return mock({ focus, nodes: [], edges: [], truncatedAtDepth: null })
+    await mockDelay(); return makeDemoGraph(focus)
   }
-  const path = type === 'gid' ? endpoints.nodeGraph(id) : endpoints.clusterGraph(id)
+  const path = focus.type === 'gid' ? endpoints.nodeGraph(focus.id) : endpoints.clusterGraph(focus.id)
   return (await apiClient.get<GraphResponse>(path)).data
 }
 
 export async function getNodes(params: { page: number; pageSize: number; search?: string; role?: Role | '' }): Promise<NodeListResponse> {
-  if (!isMockMode) return (await apiClient.get<NodeListResponse>(endpoints.NODES, { params })).data
+  if (!isMockMode) {
+    const query = {
+      page: params.page,
+      pageSize: params.pageSize,
+      search: params.search || undefined,
+      role: params.role || undefined,
+    }
+    return (await apiClient.get<NodeListResponse>(endpoints.NODES, { params: query })).data
+  }
   await mockDelay()
   if (mockScenario === 'error') throw new Error(getDict().errors.mockApi)
   if (mockScenario === 'empty') return { items: [], page: params.page, pageSize: params.pageSize, total: 0 }
   let items = demoNodes.filter((node) => !params.search || String(node.gid).includes(params.search))
   if (params.role) items = items.filter((node) => node.role === params.role)
-  items = items.sort((a, b) => b.priorityScore - a.priorityScore || a.gid - b.gid)
+  items = items.sort((a, b) => b.priorityScore - a.priorityScore || a.gid.localeCompare(b.gid))
   const start = (params.page - 1) * params.pageSize
   return { items: items.slice(start, start + params.pageSize).map(localizeNode), page: params.page, pageSize: params.pageSize, total: items.length }
 }
 
-export async function getNode(gid: number): Promise<NodeDetails> {
+export async function getNode(gid: Gid): Promise<NodeDetails> {
   if (!isMockMode) return (await apiClient.get<NodeDetails>(endpoints.node(gid))).data
   await mockDelay()
   if (mockScenario === 'error') throw new Error(getDict().errors.mockApi)

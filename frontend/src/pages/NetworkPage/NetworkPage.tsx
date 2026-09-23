@@ -15,7 +15,7 @@ import { getGraph, isMockMode } from '../../api/services'
 import { useAsyncResource } from '../../hooks/useAsyncResource'
 import { plural, rich, useI18n } from '../../i18n/i18n'
 import { formatKzt, formatRole, formatScore } from '../../utils/formatters'
-import type { GraphEdge, GraphNode, Role } from '../../types'
+import type { GraphEdge, GraphNode, GraphResponse, Role } from '../../types'
 import './NetworkPage.scss'
 
 type RoleMeta = { color: string; icon: LucideIcon }
@@ -46,7 +46,11 @@ export default function NetworkPage() {
   const clusterParam = searchParams.get('cluster')
   const type = gidParam ? 'gid' : clusterParam ? 'cluster' : null
   const rawId = gidParam ?? clusterParam
-  const id = rawId && /^\d+$/.test(rawId) ? Number(rawId) : null
+  const focus: GraphResponse['focus'] | null = gidParam && /^\d+$/.test(gidParam)
+    ? { type: 'gid', id: gidParam }
+    : clusterParam && /^\d+$/.test(clusterParam) && Number.isSafeInteger(Number(clusterParam))
+      ? { type: 'cluster', id: Number(clusterParam) }
+      : null
   const graphRef = useRef<HTMLDivElement>(null)
   const cyRef = useRef<Core | null>(null)
   const [selected, setSelected] = useState<GraphNode | null>(null)
@@ -55,7 +59,7 @@ export default function NetworkPage() {
     () => typeof window !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
   const { data, loading, error, refetch } = useAsyncResource(
-    () => type && id !== null ? getGraph(type, id) : Promise.resolve(null), [type, id],
+    () => focus ? getGraph(focus) : Promise.resolve(null), [focus?.type, focus?.id],
   )
 
   const counts = useMemo(() => ({
@@ -179,15 +183,15 @@ ${formatRole(node.data('role') as Role)}`) })
     instance.zoom({ level: Math.min(2.4, Math.max(.35, instance.zoom() * factor)), renderedPosition: { x: instance.width() / 2, y: instance.height() / 2 } })
   }
 
-  const invalid = rawId !== null && id === null
+  const invalid = rawId !== null && focus === null
   const count = (template: string, value: number) => rich(template, { n: <strong>{value}</strong> })
   return <div className="network-page page-shell">
     <div className="page-shell__heading"><span className="page-shell__eyebrow">{n.eyebrow}</span><h1>{n.title}</h1><p>{n.subtitle}</p></div>
     {isMockMode && <div className="network-page__demo">{t.common.demo}</div>}
     {!type && <div className="network-page__prompt"><GitBranch aria-hidden="true" /><div><strong>{n.chooseTitle}</strong><p>{n.chooseText}</p></div></div>}
     {invalid && <ErrorState title={n.invalidTitle} message={n.invalidText} />}
-    {type && id !== null && loading && <Loader />}
-    {type && id !== null && error && <ErrorState title={n.unavailable} message={error} onRetry={refetch} />}
+    {focus && loading && <Loader />}
+    {focus && error && <ErrorState title={n.unavailable} message={error} onRetry={refetch} />}
     {data && !loading && !error && data.nodes.length === 0 && <EmptyState title={n.emptyTitle} description={n.emptyDesc} />}
     {data && !loading && !error && data.nodes.length > 0 && <>
       <div className="network-page__summary" aria-label={n.summaryAria}>
