@@ -7,3 +7,9 @@ The project is organized into three directories:
 - [docs](docs/) — hackathon documentation, starter code, and sample data.
 
 Run backend commands from `backend/` and frontend commands from `frontend/`.
+
+## Development plans
+
+- [Frontend step-by-step plan](docs/FRONTEND_PLAN.md)
+- [Backend step-by-step plan](docs/BACKEND_PLAN.md)
+- [Shared API contract and integration plan](docs/INTEGRATION_PLAN.md)
