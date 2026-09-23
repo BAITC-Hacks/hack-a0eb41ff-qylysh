@@ -57,6 +57,36 @@
 
   &__separator { width: 1px; height: 18px; background: $border-strong; }
   .search-input { margin-left: auto; }
+
+  &__lang {
+    display: inline-flex;
+    flex-shrink: 0;
+    // offsets the search label so both controls share a baseline
+    margin-top: 18px;
+    border: 1px solid $border-strong;
+    border-radius: $radius-sm;
+    padding: 2px;
+    background: $bg-app;
+
+    button {
+      min-width: 34px;
+      height: 29px;
+      border: 0;
+      border-radius: 5px;
+      color: $text-muted;
+      background: transparent;
+      font: inherit;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: color 120ms ease, background 120ms ease;
+
+      &:hover { color: $text-primary; }
+      &:focus-visible { outline: 2px solid $accent; outline-offset: 1px; }
+      &.is-active { color: $accent; background: $accent-soft; }
+    }
+  }
 }
 
 @media (max-width: 1080px) {

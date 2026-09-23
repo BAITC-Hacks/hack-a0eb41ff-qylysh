@@ -1,5 +1,6 @@
 import { Search } from 'lucide-react'
 import type { FormEvent } from 'react'
+import { useI18n } from '../../../i18n/i18n'
 import './SearchInput.scss'
 
 type SearchInputProps = {
@@ -11,6 +12,7 @@ type SearchInputProps = {
 }
 
 export default function SearchInput({ value, onChange, onSubmit, placeholder, error }: SearchInputProps) {
+  const { t } = useI18n()
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     onSubmit()
@@ -18,7 +20,7 @@ export default function SearchInput({ value, onChange, onSubmit, placeholder, er
 
   return (
     <form className="search-input" role="search" onSubmit={handleSubmit}>
-      <label className="search-input__label" htmlFor="global-gid-search">Search GID</label>
+      <label className="search-input__label" htmlFor="global-gid-search">{t.header.searchLabel}</label>
       <div className={`search-input__field${error ? ' search-input__field--error' : ''}`}>
         <Search size={16} strokeWidth={2} aria-hidden="true" />
         <input
@@ -32,7 +34,7 @@ export default function SearchInput({ value, onChange, onSubmit, placeholder, er
           aria-invalid={Boolean(error)}
           aria-describedby={error ? 'global-gid-search-error' : undefined}
         />
-        <button type="submit" aria-label="Search client GID" title="Search client GID">
+        <button type="submit" aria-label={t.header.searchButton} title={t.header.searchButton}>
           <Search size={17} strokeWidth={2} aria-hidden="true" />
         </button>
       </div>

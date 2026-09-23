@@ -1,3 +1,4 @@
+import { fill, getDict } from '../i18n/i18n'
 import type { ClusterDetails, GraphResponse, NodeDetails, Role, SummaryResponse } from '../types'
 
 const roles: Role[] = ['coordinator', 'consolidator', 'distributor', 'transit', 'terminal', 'peripheral']
@@ -42,7 +43,8 @@ export const demoSummary: SummaryResponse = {
 
 export function makeDemoGraph(type: 'gid' | 'cluster', id: number): GraphResponse {
   if ((type === 'gid' && !demoNodes.some((node) => node.gid === id)) || (type === 'cluster' && !demoClusters.some((cluster) => cluster.clusterId === id))) {
-    throw new Error(`${type === 'gid' ? 'GID' : 'Cluster'} ${id} was not found in demonstration data.`)
+    const errors = getDict().errors
+    throw new Error(fill(type === 'gid' ? errors.gidNotFound : errors.clusterNotFound, { id }))
   }
   const pool = type === 'gid'
     ? [demoNodes.find((node) => node.gid === id)!, ...demoNodes.filter((node) => node.gid !== id).slice(0, 8)]
@@ -53,4 +55,16 @@ export function makeDemoGraph(type: 'gid' | 'cluster', id: number): GraphRespons
     edges: pool.slice(1).map((node, index) => ({ source: pool[Math.floor(index / 2)].gid, target: node.gid, sumKzt: 125000 + index * 84000, transactionCount: 2 + index })),
     truncatedAtDepth: pool.some((node) => node.depth === 4) ? 4 : null,
   }
+}
+
+/** Demo text lives in the dictionaries; these swap it in for the active language. */
+export function localizeNode<T extends { role: Role; evidence: string }>(node: T): T {
+  const dict = getDict()
+  return { ...node, evidence: fill(dict.mock.evidence, { role: dict.roles[node.role] }) }
+}
+
+export function localizeCluster<T extends { clusterId: number; hypothesis: string; description?: string }>(cluster: T): T {
+  const text = getDict().mock.clusters[cluster.clusterId]
+  if (!text) return cluster
+  return { ...cluster, hypothesis: text.hypothesis, ...('description' in cluster ? { description: text.description } : {}) }
 }

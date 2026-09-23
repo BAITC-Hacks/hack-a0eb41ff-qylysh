@@ -1,3 +1,4 @@
+import { getDict } from '../i18n/i18n'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 export function useAsyncResource<T>(loader: () => Promise<T>, dependencies: unknown[] = []) {
@@ -15,7 +16,7 @@ export function useAsyncResource<T>(loader: () => Promise<T>, dependencies: unkn
       const result = await loader()
       if (mounted.current && currentRequest === requestId.current) setData(result)
     } catch (reason) {
-      if (mounted.current && currentRequest === requestId.current) setError(reason instanceof Error ? reason.message : 'Unable to load data')
+      if (mounted.current && currentRequest === requestId.current) setError(reason instanceof Error ? reason.message : getDict().common.loadError)
     } finally {
       if (mounted.current && currentRequest === requestId.current) setLoading(false)
     }
