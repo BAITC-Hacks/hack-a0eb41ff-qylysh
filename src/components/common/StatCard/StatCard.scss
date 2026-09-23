@@ -1,0 +1,15 @@
+@use '../../../styles/variables' as *;
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 147px;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  padding: 22px 24px;
+  background: $bg-panel;
+
+  &__label { color: $text-secondary; font-size: 13px; font-weight: 500; }
+  &__value { margin-top: 17px; color: $text-primary; font-size: 31px; font-weight: 650; letter-spacing: -0.045em; line-height: 1; }
+  &__description { margin-top: auto; padding-top: 14px; color: $text-muted; font-size: 11px; }
+}

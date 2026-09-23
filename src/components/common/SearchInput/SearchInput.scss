@@ -1,0 +1,73 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.search-input {
+  position: relative;
+  width: min(100%, 310px);
+
+  &__label {
+    display: block;
+    margin-bottom: 6px;
+    color: $text-muted;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  &__field {
+    display: flex;
+    align-items: center;
+    height: 35px;
+    border: 1px solid $border-strong;
+    border-radius: $radius-sm;
+    padding-left: 11px;
+    color: $text-muted;
+    background: $bg-app;
+    transition: border-color 120ms ease;
+
+    &:focus-within { border-color: $accent; }
+    &--error { border-color: $danger; }
+
+    input {
+      width: 100%;
+      min-width: 0;
+      height: 100%;
+      border: 0;
+      outline: 0;
+      padding: 0 9px;
+      color: $text-primary;
+      background: transparent;
+      font: inherit;
+      font-size: 12px;
+
+      &::placeholder { color: $text-muted; opacity: 1; }
+    }
+
+    button {
+      display: grid;
+      place-items: center;
+      flex: 0 0 35px;
+      width: 35px;
+      height: 100%;
+      border: 0;
+      border-left: 1px solid $border-color;
+      border-radius: 0 $radius-sm $radius-sm 0;
+      color: $text-secondary;
+      background: $bg-panel;
+      cursor: pointer;
+
+      &:hover { color: $accent; background: $bg-hover; }
+      @include focus-ring;
+    }
+  }
+
+  &__error {
+    position: absolute;
+    right: 0;
+    bottom: -20px;
+    color: $danger;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+}

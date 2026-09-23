@@ -1,0 +1,30 @@
+@use '../../../styles/variables' as *;
+
+.app-layout {
+  display: grid;
+  grid-template-columns: $sidebar-width minmax(0, 1fr);
+  grid-template-rows: $header-height minmax(0, 1fr);
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: $bg-app;
+
+  &__content {
+    grid-column: 2;
+    grid-row: 2;
+    min-width: 0;
+    overflow: auto;
+    padding: 38px clamp(28px, 3.4vw, 64px) 60px;
+  }
+}
+
+@media (max-width: 760px) {
+  .app-layout {
+    grid-template-columns: 76px minmax(0, 1fr);
+
+    &__content {
+      padding: 26px 20px 42px;
+    }
+  }
+}

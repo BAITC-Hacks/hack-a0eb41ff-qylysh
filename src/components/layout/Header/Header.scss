@@ -1,0 +1,71 @@
+@use '../../../styles/variables' as *;
+
+.header {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: clamp(22px, 3vw, 54px);
+  min-width: 0;
+  border-bottom: 1px solid $border-color;
+  padding: 0 clamp(28px, 3.4vw, 64px);
+  background: $bg-sidebar;
+
+  &__dataset {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    white-space: nowrap;
+  }
+
+  &__dataset-icon {
+    display: grid;
+    place-items: center;
+    width: 35px;
+    height: 35px;
+    border: 1px solid $border-strong;
+    border-radius: $radius-sm;
+    color: $text-secondary;
+    background: $bg-panel;
+  }
+
+  &__dataset-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    small {
+      color: $text-muted;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+    }
+
+    strong { color: $text-primary; font-size: 13px; font-weight: 600; }
+  }
+
+  &__metrics {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: $text-muted;
+    font-size: 12px;
+    white-space: nowrap;
+
+    strong { color: $text-secondary; font-weight: 600; }
+  }
+
+  &__separator { width: 1px; height: 18px; background: $border-strong; }
+  .search-input { margin-left: auto; }
+}
+
+@media (max-width: 1080px) {
+  .header__metrics { display: none; }
+}
+
+@media (max-width: 760px) {
+  .header { gap: 15px; padding: 0 20px; }
+  .header__dataset-icon { display: none; }
+  .header__dataset-copy strong { font-size: 12px; }
+  .search-input { max-width: 220px; }
+}
