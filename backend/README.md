@@ -10,9 +10,9 @@ Python 3.11+, FastAPI, Uvicorn, Pydantic v2, pydantic-settings, pandas, pyarrow,
 
 ## Current stage
 
-Chapter 5 — deterministic structural role engine.
+Chapter 12 — integrated analytical pipeline, snapshot, and read API.
 
-The pipeline validates parquet files, builds the directed money-flow graph, calculates one feature row per client, and assigns one of the six frozen structural roles. Role score, evidence, database, clusters, and ranking are not implemented yet.
+The complete local pipeline validates parquet files, builds the directed money-flow graph, calculates features and explainable roles, clusters the network, ranks nodes, and writes a SQLite read model plus CSV exports. FastAPI serves the frozen frontend contract from that snapshot.
 
 ## Input files
 
@@ -60,7 +60,15 @@ The feature table contains directed degree, KZT and transaction totals, weighted
 python -m app.analytics.check_roles --data-dir ../docs/data
 ```
 
-Rules are evaluated in this order: coordinator, consolidator, distributor, transit, terminal, peripheral. Coordinators combine top seed reach and PageRank; consolidators combine high incoming degree and volume; distributors combine high outgoing degree and volume; transit requires observed incoming and outgoing flow with pass-through 0.8–1.2. Seed nodes are excluded from the transit rule. Terminal requires observed incoming flow, zero outgoing degree, and `depth < 4`; depth-four truncation therefore never creates a terminal automatically. Peripheral is the exhaustive fallback. These roles describe graph structure and are analytical hypotheses, not conclusions about guilt.
+Rules are evaluated in this order: coordinator, consolidator, distributor, transit, terminal, peripheral. Coordinators combine top seed reach and PageRank; consolidators combine high incoming degree and volume; distributors combine high outgoing degree and volume; transit requires observed incoming and outgoing flow with pass-through 0.8–1.2. Seed nodes are excluded from the transit rule. Terminal requires observed incoming flow, zero outgoing degree, and `depth < 4`; depth-four truncation therefore never creates a terminal automatically. Peripheral is the exhaustive fallback. `role_score` measures rule-match strength, while `priority_score` combines role strength, PageRank, seed reach, volume, and degree percentiles. Neither score is a probability of guilt.
+
+## Build the analytical snapshot
+
+```bash
+python -m app.analytics.run_pipeline --data-dir ../docs/data --database analysis.db --out-dir out
+```
+
+The command replaces `analysis.db` atomically and writes `out/nodes_roles.csv`, `out/clusters.csv`, and `out/top_nodes.csv`. Repeated runs replace prior results and do not duplicate rows.
 
 ## Implementation roadmap
 
@@ -72,7 +80,7 @@ Nodes: 2248. Edges: 3119. Transactions: 4840. Seeds: 81. The CLI checks these co
 
 ## Validation performed
 
-Required columns, semantic dtypes, null and infinite values, nonnegative amounts and counts, node depth 0..4, edge depth 1..4, unique `gid`, unique edge `(src, dst)` pairs, references to existing nodes, and expected counts are checked. Since the dataset documentation defines edges as aggregated transactions, validation also checks the pair sets, transaction counts, and sums with floating point tolerance. Extra columns are allowed. No graph analytics is performed at this stage.
+Required columns, semantic dtypes, null and infinite values, nonnegative amounts and counts, node depth 0..4, edge depth 1..4, unique `gid`, unique edge `(src, dst)` pairs, references to existing nodes, and expected counts are checked. Since the dataset documentation defines edges as aggregated transactions, validation also checks pair sets, transaction counts, and sums with floating point tolerance. Extra columns are allowed.
 
 ## Installation
 
@@ -102,9 +110,21 @@ pytest
 - `GET /health` — health status, outside the versioned API.
 - `GET /docs` — interactive API documentation.
 - `GET /openapi.json` — OpenAPI schema.
+- `GET /api/v1/summary`
+- `GET /api/v1/nodes`
+- `GET /api/v1/nodes/{gid}`
+- `GET /api/v1/nodes/{gid}/graph`
+- `GET /api/v1/top-nodes`
+- `GET /api/v1/clusters`
+- `GET /api/v1/clusters/{cluster_id}`
+- `GET /api/v1/clusters/{cluster_id}/graph`
 
-The API router uses `/api/v1`; domain routes have not been added.
+Run the snapshot command before starting the API. Node list filters are `role`, `cluster`, `minPriority`, `isSeed`, `search`, `page`, and frontend-compatible `pageSize`; `limit` remains an accepted alias.
 
 ## Naming conventions
 
-Python fields and the current schema JSON use snake_case. Core names are `gid`, `role`, `role_score`, `priority_score`, `cluster_id`, and `evidence`. The full field set is defined in `app/schemas/`. The planned `GET /api/v1/summary` response is an explicit exception: its external JSON uses camelCase as specified in `../docs/INTEGRATION_PLAN.md`, while backend data keeps snake_case.
+Python, DataFrame, SQLite, and CSV fields use snake_case. Core names are `gid`, `role`, `role_score`, `priority_score`, `cluster_id`, and `evidence`. Final `/api/v1` response models serialize JSON in camelCase to match the checked-in TypeScript contract; `/health` retains its frozen Chapter 1 response.
+
+## Scaling beyond the hackathon dataset
+
+At roughly one million nodes, replace in-memory pandas/NetworkX stages with chunked parquet reads, a graph engine or sparse distributed implementation, and batch-written database tables. Compute reachability and centrality approximately or incrementally, keep API graph payloads bounded, and move snapshot construction to an offline job. The API can continue serving the same contract from indexed read tables.
