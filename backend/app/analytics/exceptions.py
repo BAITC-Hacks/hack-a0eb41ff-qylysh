@@ -24,3 +24,7 @@ class FeatureEngineeringError(DatasetError):
 
 class RoleAssignmentError(DatasetError):
     """The feature table cannot be classified safely."""
+
+
+class AnalyticsError(DatasetError):
+    """A downstream analytical stage received inconsistent input."""

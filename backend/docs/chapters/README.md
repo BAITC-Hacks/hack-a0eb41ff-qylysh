@@ -11,7 +11,13 @@ Roadmap source: the shared architecture discussion supplied for this project. Th
 | 3. Directed graph | Complete |
 | 4. Features | Complete |
 | 5. Role engine | Complete |
-| 6–12 | Prompt ready; implementation pending in order |
+| 6. Role score and evidence | Complete |
+| 7. Clustering | Complete |
+| 8. Priority ranking | Complete |
+| 9. SQLite and exports | Complete |
+| 10. API contracts | Complete |
+| 11. FastAPI endpoints | Complete |
+| 12. Integration and regression | Complete |
 
 1. [Chapter 1 — Foundation and contracts](01-foundation.md)
 2. [Chapter 2 — Dataset loading and validation](02-ingestion.md)

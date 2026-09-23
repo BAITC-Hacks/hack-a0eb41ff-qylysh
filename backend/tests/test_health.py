@@ -26,4 +26,4 @@ def test_api_documentation_and_router_foundation() -> None:
     assert response.status_code == 200
     assert response.json()["info"]["title"] == "MoneyGraph API"
     assert "/health" in response.json()["paths"]
-    assert not any(path.startswith("/api/v1/") for path in response.json()["paths"])
+    assert any(path.startswith("/api/v1/") for path in response.json()["paths"])
