@@ -125,6 +125,8 @@ Run the snapshot command before starting the API. Node list filters are `role`, 
 
 Python, DataFrame, SQLite, and CSV fields use snake_case. Core names are `gid`, `role`, `role_score`, `priority_score`, `cluster_id`, and `evidence`. Final `/api/v1` response models serialize JSON in camelCase to match the checked-in TypeScript contract; `/health` retains its frozen Chapter 1 response.
 
+External API GIDs (`gid`, `topGid`, graph `source`/`target`, and GID graph focus) are decimal strings. Internal Parquet and SQLite GIDs remain int64. This preserves exact 18-digit identifiers in JavaScript. Local browser requests from `http://localhost:5173` and `http://127.0.0.1:5173` are allowed by CORS; override `MONEYGRAPH_CORS_ORIGINS` with a comma-separated list for other origins.
+
 ## Scaling beyond the hackathon dataset
 
 At roughly one million nodes, replace in-memory pandas/NetworkX stages with chunked parquet reads, a graph engine or sparse distributed implementation, and batch-written database tables. Compute reachability and centrality approximately or incrementally, keep API graph payloads bounded, and move snapshot construction to an offline job. The API can continue serving the same contract from indexed read tables.

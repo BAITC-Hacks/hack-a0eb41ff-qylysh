@@ -17,7 +17,7 @@
 1. Истина о данных — исходные Parquet и вычисленный backend snapshot. Макетные значения и примеры JSON служат только для формы ответа.
 2. API имеет prefix `/api/v1`. `GET /health` находится вне prefix. Frontend задаёт `VITE_API_URL=http://localhost:8000/api/v1` и вызывает относительные пути вроде `/summary`.
 3. В Python/SQLite внутренние имена `snake_case`. В закреплённом внешнем `/summary` JSON — `camelCase`; преобразование выполняет backend. Остальные DTO фиксируются до реализации их handlers. Нельзя полагаться на автоматическое преобразование, пока оно не проверено тестом.
-4. GID — целое число; роли — шесть значений из планов. Score — число 0..1. `null` допустим только там, где это прямо указано контрактом.
+4. GID — целочисленный идентификатор в Parquet и SQLite, но десятичная строка во внешнем JSON и TypeScript. Все 2248 GID этого набора превышают `Number.MAX_SAFE_INTEGER`; передача JSON number меняет значение в браузере. URL принимает ту же десятичную строку. Роли — шесть значений из планов. Score — число 0..1. `null` допустим только там, где это прямо указано контрактом.
 5. Даты/объём/роли отражают только наблюдаемый набор: июль 2026, 81 seed, исходящие переводы, 4 хопа, порог ≥5 000 KZT. Отсутствие наблюдаемого ребра не доказывает отсутствие реальной связи.
 6. Изменение имени поля, типа, nullability, query параметра, кода ошибки или endpoint требует обновления этого документа, backend schema/OpenAPI, frontend DTO/service и проверки в одном интеграционном цикле.
 7. `PASS` ставится только после фактического выполнения команды или ручной проверки. Для недоступного backend/mock/браузера писать `NOT VERIFIED` с причиной. Каждый обнаруженный сбой исправлять и повторять соответствующий gate.
@@ -32,13 +32,15 @@ Content-Type: application/json
 ```
 
 ```ts
+type Gid = string // decimal digits; never convert to JavaScript number
+
 type Role =
   | 'coordinator' | 'consolidator' | 'distributor'
   | 'transit' | 'terminal' | 'peripheral'
 
 interface SummaryTopNode {
   rank: number
-  gid: number
+  gid: Gid
   role: Role
   priorityScore: number
   clusterId: number
@@ -50,7 +52,7 @@ interface SummaryCluster {
   nodeCount: number
   seedCount: number
   internalVolumeKzt: number
-  topGid: number | null
+  topGid: Gid | null
   hypothesis: string
 }
 
@@ -68,7 +70,7 @@ interface SummaryResponse {
 
 Проверки: сумма `roles` равна `totalNodes`; `totalClusters` равно числу кластеров в snapshot; `topNodes` отсортированы по `priorityScore` DESC; `rank` начинается с 1; score 0..1; `topGid` принадлежит кластеру, если не `null`. Пример из переписки содержит выдуманные распределения и не считается эталоном чисел.
 
-**Известное расхождение текущего кода:** `backend/app/schemas/*.py` сериализуют существующие внутренние схемы в `snake_case`, а `/summary` требует `camelCase`. При реализации summary backend обязан создать отдельную внешнюю response schema или явное преобразование. Не менять этот контракт молча и не заставлять frontend угадывать casing.
+**Интеграционное уточнение:** исходное предложение переписки использовало `number` для GID. Реальные 18-значные значения делают этот тип неточным в JavaScript, поэтому совместный внешний контракт заменён на `Gid = string` во всех ответах и URL. Backend сериализует внешние ответы в `camelCase`; внутренние аналитические поля остаются `snake_case`.
 
 ## 4. Реестр остальных endpoint
 
@@ -124,4 +126,4 @@ Mock или real mode:
 
 ## 8. Состояние проекта при создании документа
 
-Этот раздел описывает состояние на момент первоначального создания плана. После новых коммитов актуальный результат проверки находится в [INTEGRATION_STATUS.md](INTEGRATION_STATUS.md). Сам план остаётся контрактом и инструкцией, а не заявлением о готовой интеграции.
+Актуальный результат сквозной проверки находится в [INTEGRATION_STATUS.md](INTEGRATION_STATUS.md). Сам план остаётся контрактом и инструкцией.

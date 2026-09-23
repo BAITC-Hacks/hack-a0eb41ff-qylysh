@@ -13,3 +13,4 @@ Run backend commands from `backend/` and frontend commands from `frontend/`.
 - [Frontend step-by-step plan](docs/FRONTEND_PLAN.md)
 - [Backend step-by-step plan](docs/BACKEND_PLAN.md)
 - [Shared API contract and integration plan](docs/INTEGRATION_PLAN.md)
+- [Current integration status](docs/INTEGRATION_STATUS.md)

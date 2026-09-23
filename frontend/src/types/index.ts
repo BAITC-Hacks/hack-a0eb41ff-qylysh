@@ -6,11 +6,12 @@ export type Role =
   | 'terminal'
   | 'peripheral'
 
-export type Gid = number
+// Source GIDs exceed Number.MAX_SAFE_INTEGER. Keep them exact through JSON and URLs.
+export type Gid = string
 
 export interface SummaryTopNode {
   rank: number
-  gid: number
+  gid: Gid
   role: Role
   priorityScore: number
   clusterId: number
@@ -22,7 +23,7 @@ export interface SummaryCluster {
   nodeCount: number
   seedCount: number
   internalVolumeKzt: number
-  topGid: number | null
+  topGid: Gid | null
   hypothesis: string
 }
 
@@ -38,7 +39,7 @@ export interface SummaryResponse {
 }
 
 export interface GraphNode {
-  gid: number
+  gid: Gid
   role: Role
   roleScore: number
   priorityScore: number
@@ -48,14 +49,14 @@ export interface GraphNode {
 }
 
 export interface GraphEdge {
-  source: number
-  target: number
+  source: Gid
+  target: Gid
   sumKzt: number
   transactionCount: number
 }
 
 export interface GraphResponse {
-  focus: { type: 'gid' | 'cluster'; id: number }
+  focus: { type: 'gid'; id: Gid } | { type: 'cluster'; id: number }
   nodes: GraphNode[]
   edges: GraphEdge[]
   truncatedAtDepth: number | null

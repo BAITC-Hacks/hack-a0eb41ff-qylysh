@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     DEBUG: bool = True
     DATABASE_PATH: str = "analysis.db"
+    CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
 
     model_config = SettingsConfigDict(env_file=".env", env_prefix="MONEYGRAPH_")
 

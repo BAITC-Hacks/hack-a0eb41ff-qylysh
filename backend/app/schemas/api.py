@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -10,12 +10,16 @@ def _camel(name: str) -> str:
     return head + "".join(part.capitalize() for part in tail)
 
 
+# The source data uses 18-digit GIDs. JSON numbers lose their exact value in browsers.
+Gid = Annotated[str, Field(pattern=r"^[0-9]+$")]
+
+
 class ApiModel(BaseModel):
     model_config = ConfigDict(alias_generator=_camel, populate_by_name=True, extra="forbid")
 
 
 class NodeListItem(ApiModel):
-    gid: int = Field(ge=0)
+    gid: Gid
     role: NodeRole
     role_score: float = Field(ge=0, le=1)
     priority_score: float = Field(ge=0, le=1)
@@ -46,7 +50,7 @@ class PaginatedNodesResponse(ApiModel):
 
 class SummaryTopNode(ApiModel):
     rank: int = Field(ge=1)
-    gid: int = Field(ge=0)
+    gid: Gid
     role: NodeRole
     priority_score: float = Field(ge=0, le=1)
     cluster_id: int = Field(ge=0)
@@ -58,13 +62,13 @@ class ClusterListItem(ApiModel):
     node_count: int = Field(ge=0)
     seed_count: int = Field(ge=0)
     internal_volume_kzt: float = Field(ge=0)
-    top_gid: int | None
+    top_gid: Gid | None
     hypothesis: str
     description: str
 
 
 class ClusterResponse(ClusterListItem):
-    top_gids: list[int]
+    top_gids: list[Gid]
 
 
 class ClusterListResponse(ApiModel):
@@ -84,7 +88,7 @@ class SummaryResponse(ApiModel):
 
 
 class ApiGraphNode(ApiModel):
-    gid: int
+    gid: Gid
     role: NodeRole
     role_score: float
     priority_score: float
@@ -94,15 +98,15 @@ class ApiGraphNode(ApiModel):
 
 
 class ApiGraphEdge(ApiModel):
-    source: int
-    target: int
+    source: Gid
+    target: Gid
     sum_kzt: float
     transaction_count: int
 
 
 class GraphFocus(ApiModel):
     type: Literal["gid", "cluster"]
-    id: int
+    id: Gid | int
 
 
 class ApiGraphResponse(ApiModel):

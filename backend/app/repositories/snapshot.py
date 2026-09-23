@@ -29,6 +29,7 @@ def node_to_api(row: sqlite3.Row, *, details: bool = False) -> dict:
     if details:
         keys |= {"pagerank", "pass_through", "seed_reach_count", "truncated_by_depth"}
     item = {key: source[key] for key in keys}
+    item["gid"] = str(item["gid"])
     item["is_seed"] = bool(item["is_seed"])
     if details:
         item["truncated_by_depth"] = bool(item["truncated_by_depth"])
@@ -42,9 +43,9 @@ def cluster_to_api(row: sqlite3.Row, *, details: bool = False) -> dict:
     result = {
         "cluster_id": item["cluster_id"], "node_count": item["n_nodes"],
         "seed_count": item["n_seed"], "internal_volume_kzt": item["sum_kzt_internal"],
-        "top_gid": top_gids[0] if top_gids else None,
+        "top_gid": str(top_gids[0]) if top_gids else None,
         "hypothesis": item["hypothesis"], "description": item["hypothesis"],
     }
     if details:
-        result["top_gids"] = top_gids
+        result["top_gids"] = [str(gid) for gid in top_gids]
     return result

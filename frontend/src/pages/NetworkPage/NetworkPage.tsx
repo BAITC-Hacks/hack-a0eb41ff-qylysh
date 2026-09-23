@@ -9,7 +9,7 @@ import Loader from '../../components/common/Loader/Loader'
 import { getGraph, isMockMode } from '../../api/services'
 import { useAsyncResource } from '../../hooks/useAsyncResource'
 import { formatKzt, formatRole, formatScore } from '../../utils/formatters'
-import type { GraphNode } from '../../types'
+import type { GraphNode, GraphResponse } from '../../types'
 import './NetworkPage.scss'
 
 const roleColors: Record<string, string> = { coordinator: '#a68ce6', consolidator: '#e47c80', distributor: '#e9a568', transit: '#70a9dd', terminal: '#74c5a0', peripheral: '#8c9ba7' }
@@ -20,11 +20,15 @@ export default function NetworkPage() {
   const clusterParam = searchParams.get('cluster')
   const type = gidParam ? 'gid' : clusterParam ? 'cluster' : null
   const rawId = gidParam ?? clusterParam
-  const id = rawId && /^\d+$/.test(rawId) ? Number(rawId) : null
+  const focus: GraphResponse['focus'] | null = gidParam && /^\d+$/.test(gidParam)
+    ? { type: 'gid', id: gidParam }
+    : clusterParam && /^\d+$/.test(clusterParam) && Number.isSafeInteger(Number(clusterParam))
+      ? { type: 'cluster', id: Number(clusterParam) }
+      : null
   const graphRef = useRef<HTMLDivElement>(null)
   const [selected, setSelected] = useState<GraphNode | null>(null)
   const { data, loading, error, refetch } = useAsyncResource(
-    () => type && id !== null ? getGraph(type, id) : Promise.resolve(null), [type, id],
+    () => focus ? getGraph(focus) : Promise.resolve(null), [focus?.type, focus?.id],
   )
 
   useEffect(() => {
@@ -46,14 +50,14 @@ export default function NetworkPage() {
     return () => instance.destroy()
   }, [data])
 
-  const invalid = rawId !== null && id === null
+  const invalid = rawId !== null && focus === null
   return <div className="network-page page-shell">
     <div className="page-shell__heading"><span className="page-shell__eyebrow">WORKSPACE / NETWORK</span><h1>Network Analysis</h1><p>Explore directed connections in the observed transaction network.</p></div>
     {isMockMode && <div className="network-page__demo">DEMONSTRATION DATA · MOCK API</div>}
     {!type && <div className="network-page__prompt"><GitBranch aria-hidden="true" /><div><strong>Choose a network focus</strong><p>Search for a numeric GID or open a cluster from the Clusters page.</p></div></div>}
     {invalid && <ErrorState title="Invalid network identifier" message="GID and cluster identifiers must be numeric." />}
-    {type && id !== null && loading && <Loader />}
-    {type && id !== null && error && <ErrorState title="Network unavailable" message={error} onRetry={refetch} />}
+    {focus && loading && <Loader />}
+    {focus && error && <ErrorState title="Network unavailable" message={error} onRetry={refetch} />}
     {data && !loading && !error && data.nodes.length === 0 && <EmptyState title="Empty graph" description="No observed connections were returned for this focus." />}
     {data && !loading && !error && data.nodes.length > 0 && <>
       <div className="network-page__selected">Viewing {data.focus.type}: <strong>{data.focus.id}</strong><span>{data.nodes.length} nodes · {data.edges.length} directed relations</span></div>

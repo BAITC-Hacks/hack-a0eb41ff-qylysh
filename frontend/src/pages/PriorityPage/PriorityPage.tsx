@@ -16,7 +16,7 @@ export default function PriorityPage() {
   const page = Math.max(1, Number(params.get('page')) || 1)
   const search = params.get('search') ?? ''
   const role = (params.get('role') ?? '') as Role | ''
-  const gid = params.get('gid') && /^\d+$/.test(params.get('gid')!) ? Number(params.get('gid')) : null
+  const gid = params.get('gid') && /^\d+$/.test(params.get('gid')!) ? params.get('gid') : null
   const list = useAsyncResource(() => getNodes({ page, pageSize, search, role }), [page, search, role])
   const detail = useAsyncResource(() => gid === null ? Promise.resolve(null) : getNode(gid), [gid])
 

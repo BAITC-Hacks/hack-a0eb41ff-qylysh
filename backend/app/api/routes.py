@@ -31,7 +31,7 @@ def summary():
     for row in clusters:
         item = cluster_to_api(row)
         top_clusters.append(item)
-    return {"total_nodes": counts["nodes"], "total_edges": counts["edges"], "total_transactions": counts["transactions"], "total_seeds": seeds, "total_clusters": counts["clusters"], "roles": roles, "top_nodes": [{"rank": index + 1, "gid": row["gid"], "role": row["role"], "priority_score": row["priority_score"], "cluster_id": row["cluster_id"], "evidence": row["evidence"]} for index, row in enumerate(top)], "top_clusters": top_clusters}
+    return {"total_nodes": counts["nodes"], "total_edges": counts["edges"], "total_transactions": counts["transactions"], "total_seeds": seeds, "total_clusters": counts["clusters"], "roles": roles, "top_nodes": [{"rank": index + 1, "gid": str(row["gid"]), "role": row["role"], "priority_score": row["priority_score"], "cluster_id": row["cluster_id"], "evidence": row["evidence"]} for index, row in enumerate(top)], "top_clusters": top_clusters}
 
 
 @router.get("/nodes", response_model=PaginatedNodesResponse)
@@ -62,10 +62,10 @@ def _graph_payload(db: sqlite3.Connection, gids: set[int], focus_type: str, focu
     placeholders = ",".join("?" for _ in ordered)
     node_rows = db.execute(f"SELECT * FROM nodes WHERE gid IN ({placeholders})", ordered).fetchall()
     edge_rows = db.execute(f"SELECT * FROM edges WHERE src IN ({placeholders}) AND dst IN ({placeholders})", [*ordered, *ordered]).fetchall()
-    nodes_payload = [{"gid": r["gid"], "role": r["role"], "role_score": r["role_score"], "priority_score": r["priority_score"], "cluster_id": r["cluster_id"], "is_seed": bool(r["is_seed"]), "depth": r["depth"]} for r in node_rows]
-    edges_payload = [{"source": r["src"], "target": r["dst"], "sum_kzt": r["sum_kzt"], "transaction_count": r["n_tx"]} for r in edge_rows]
+    nodes_payload = [{"gid": str(r["gid"]), "role": r["role"], "role_score": r["role_score"], "priority_score": r["priority_score"], "cluster_id": r["cluster_id"], "is_seed": bool(r["is_seed"]), "depth": r["depth"]} for r in node_rows]
+    edges_payload = [{"source": str(r["src"]), "target": str(r["dst"]), "sum_kzt": r["sum_kzt"], "transaction_count": r["n_tx"]} for r in edge_rows]
     truncated = 4 if any(n["depth"] == 4 for n in nodes_payload) else None
-    return {"focus": {"type": focus_type, "id": focus_id}, "nodes": nodes_payload, "edges": edges_payload, "truncated_at_depth": truncated}
+    return {"focus": {"type": focus_type, "id": str(focus_id) if focus_type == "gid" else focus_id}, "nodes": nodes_payload, "edges": edges_payload, "truncated_at_depth": truncated}
 
 
 @router.get("/nodes/{gid}/graph", response_model=ApiGraphResponse)

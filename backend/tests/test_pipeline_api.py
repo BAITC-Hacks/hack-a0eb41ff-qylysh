@@ -65,21 +65,37 @@ def test_pipeline_persistence_and_api(tmp_path, synthetic_dataset: RawDataset, m
 
     monkeypatch.setattr(settings, "DATABASE_PATH", str(database))
     client = TestClient(app)
-    assert client.get("/api/v1/summary").status_code == 200
+    summary = client.get("/api/v1/summary")
+    assert summary.status_code == 200
+    assert isinstance(summary.json()["topNodes"][0]["gid"], str)
     listing = client.get("/api/v1/nodes", params={"page": 1, "pageSize": 2})
     assert listing.status_code == 200
     assert listing.json()["pageSize"] == 2
-    assert client.get("/api/v1/nodes/1").status_code == 200
+    assert isinstance(listing.json()["items"][0]["gid"], str)
+    details = client.get("/api/v1/nodes/1")
+    assert details.status_code == 200
+    assert details.json()["gid"] == "1"
     assert client.get("/api/v1/nodes/999").status_code == 404
     graph = client.get("/api/v1/nodes/1/graph")
     assert graph.status_code == 200
     assert set(graph.json()) == {"focus", "nodes", "edges", "truncatedAtDepth"}
+    assert graph.json()["focus"] == {"type": "gid", "id": "1"}
+    assert all(isinstance(node["gid"], str) for node in graph.json()["nodes"])
+    assert all(isinstance(edge["source"], str) and isinstance(edge["target"], str) for edge in graph.json()["edges"])
     clusters = client.get("/api/v1/clusters")
     assert clusters.status_code == 200
+    assert isinstance(clusters.json()["items"][0]["topGid"], str)
     cluster_id = clusters.json()["items"][0]["clusterId"]
     assert client.get(f"/api/v1/clusters/{cluster_id}").status_code == 200
-    assert client.get(f"/api/v1/clusters/{cluster_id}/graph").status_code == 200
+    assert client.get(f"/api/v1/clusters/{cluster_id}/graph").json()["focus"]["id"] == cluster_id
     assert client.get("/api/v1/nodes", params={"minPriority": 2}).status_code == 422
+
+    preflight = client.options(
+        "/api/v1/summary",
+        headers={"Origin": "http://localhost:5173", "Access-Control-Request-Method": "GET"},
+    )
+    assert preflight.status_code == 200
+    assert preflight.headers["access-control-allow-origin"] == "http://localhost:5173"
 
 
 def test_api_openapi_contains_frozen_domain_routes() -> None:

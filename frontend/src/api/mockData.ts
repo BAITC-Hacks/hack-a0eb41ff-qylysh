@@ -3,7 +3,7 @@ import type { ClusterDetails, GraphResponse, NodeDetails, Role, SummaryResponse 
 const roles: Role[] = ['coordinator', 'consolidator', 'distributor', 'transit', 'terminal', 'peripheral']
 
 export const demoNodes: NodeDetails[] = Array.from({ length: 46 }, (_, index) => {
-  const gid = 1001 + index
+  const gid = String(1001 + index)
   const role = roles[index % roles.length]
   return {
     gid,
@@ -23,10 +23,10 @@ export const demoNodes: NodeDetails[] = Array.from({ length: 46 }, (_, index) =>
 })
 
 export const demoClusters: ClusterDetails[] = [
-  { clusterId: 1, nodeCount: 714, seedCount: 28, internalVolumeKzt: 184200000, topGid: 1001, hypothesis: 'Dense coordination around several high-flow nodes.', description: 'Observed community with repeated transfers among a compact core.' },
-  { clusterId: 2, nodeCount: 603, seedCount: 21, internalVolumeKzt: 147850000, topGid: 1002, hypothesis: 'Layered distribution into terminal accounts.', description: 'Broad distribution pattern with multiple short outward paths.' },
-  { clusterId: 3, nodeCount: 511, seedCount: 18, internalVolumeKzt: 121400000, topGid: 1003, hypothesis: 'Consolidation followed by several transit chains.', description: 'Incoming flows converge before continuing through observed intermediaries.' },
-  { clusterId: 4, nodeCount: 420, seedCount: 14, internalVolumeKzt: 93300000, topGid: 1004, hypothesis: 'Sparse peripheral structure near the depth boundary.', description: 'Looser community containing many depth-four observations.' },
+  { clusterId: 1, nodeCount: 714, seedCount: 28, internalVolumeKzt: 184200000, topGid: '1001', hypothesis: 'Dense coordination around several high-flow nodes.', description: 'Observed community with repeated transfers among a compact core.' },
+  { clusterId: 2, nodeCount: 603, seedCount: 21, internalVolumeKzt: 147850000, topGid: '1002', hypothesis: 'Layered distribution into terminal accounts.', description: 'Broad distribution pattern with multiple short outward paths.' },
+  { clusterId: 3, nodeCount: 511, seedCount: 18, internalVolumeKzt: 121400000, topGid: '1003', hypothesis: 'Consolidation followed by several transit chains.', description: 'Incoming flows converge before continuing through observed intermediaries.' },
+  { clusterId: 4, nodeCount: 420, seedCount: 14, internalVolumeKzt: 93300000, topGid: '1004', hypothesis: 'Sparse peripheral structure near the depth boundary.', description: 'Looser community containing many depth-four observations.' },
 ]
 
 export const demoSummary: SummaryResponse = {
@@ -40,7 +40,8 @@ export const demoSummary: SummaryResponse = {
   topClusters: demoClusters.slice(0, 3),
 }
 
-export function makeDemoGraph(type: 'gid' | 'cluster', id: number): GraphResponse {
+export function makeDemoGraph(focus: GraphResponse['focus']): GraphResponse {
+  const { type, id } = focus
   if ((type === 'gid' && !demoNodes.some((node) => node.gid === id)) || (type === 'cluster' && !demoClusters.some((cluster) => cluster.clusterId === id))) {
     throw new Error(`${type === 'gid' ? 'GID' : 'Cluster'} ${id} was not found in demonstration data.`)
   }
@@ -48,7 +49,7 @@ export function makeDemoGraph(type: 'gid' | 'cluster', id: number): GraphRespons
     ? [demoNodes.find((node) => node.gid === id)!, ...demoNodes.filter((node) => node.gid !== id).slice(0, 8)]
     : demoNodes.filter((node) => node.clusterId === id).slice(0, 12)
   return {
-    focus: { type, id },
+    focus,
     nodes: pool,
     edges: pool.slice(1).map((node, index) => ({ source: pool[Math.floor(index / 2)].gid, target: node.gid, sumKzt: 125000 + index * 84000, transactionCount: 2 + index })),
     truncatedAtDepth: pool.some((node) => node.depth === 4) ? 4 : null,
