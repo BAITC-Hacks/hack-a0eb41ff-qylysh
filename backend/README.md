@@ -6,13 +6,13 @@ Python backend for the MoneyGraph financial transfer graph analytics application
 
 ## Stack
 
-Python 3.11+, FastAPI, Uvicorn, Pydantic v2, pydantic-settings, pandas, pyarrow, pytest, and httpx.
+Python 3.11+, FastAPI, Uvicorn, Pydantic v2, pydantic-settings, pandas, pyarrow, NetworkX, pytest, and httpx.
 
 ## Current stage
 
-Chapter 2 — dataset loading and validation.
+Chapter 4 — deterministic graph feature engineering.
 
-The ingestion layer reads and validates the parquet files. Graph analytics, database, roles, clusters, and ranking are not implemented yet. `NodeRole` and the schemas define data contracts only; they do not calculate results. The starter code in `../docs/starter` is separate from this backend.
+The ingestion layer validates the parquet files, the graph builder creates a directed `src -> dst` money-flow graph, and feature engineering calculates one metric row per client. Every node is retained, including clients absent from all edges. Roles, database, clusters, and ranking are not implemented yet. `NodeRole` and the schemas define data contracts only; they do not calculate results.
 
 ## Input files
 
@@ -27,6 +27,36 @@ python -m app.analytics.check_data --data-dir ../docs/data
 ```
 
 The CLI exits with code 0 on success and a nonzero code on loading or validation failure.
+
+## Build and check the graph
+
+From `backend/`, run:
+
+```bash
+python -m app.analytics.check_graph --data-dir ../docs/data
+```
+
+Library usage after validation:
+
+```python
+from app.analytics.graph_builder import build_graph
+
+graph = build_graph(dataset)
+```
+
+Nodes use `gid` as their key and retain `depth` and `is_seed`. Directed edges retain `sum_kzt`, `n_tx`, and `depth`.
+
+## Calculate and check features
+
+```bash
+python -m app.analytics.check_features --data-dir ../docs/data
+```
+
+The feature table contains directed degree, KZT and transaction totals, weighted PageRank, pass-through, seed reach, depth truncation, and percentile signals. `seed_reach_count` includes a seed's zero-length path to itself. Percentiles use average ranks for ties. `pass_through` is `None` when observed incoming value is zero; seed incoming history remains known to be incomplete.
+
+## Implementation roadmap
+
+Detailed prompts for all 12 backend stages are in [`docs/chapters`](docs/chapters/README.md).
 
 ## Expected hackathon dataset
 

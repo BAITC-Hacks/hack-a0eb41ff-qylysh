@@ -12,3 +12,11 @@ class DatasetValidationError(DatasetError):
         super().__init__(
             "Dataset validation failed:\n" + "\n".join(f"- {error}" for error in errors)
         )
+
+
+class GraphConstructionError(DatasetError):
+    """The canonical graph cannot be built without losing dataset information."""
+
+
+class FeatureEngineeringError(DatasetError):
+    """Required graph attributes are missing or invalid for feature calculation."""
