@@ -10,9 +10,9 @@ Python 3.11+, FastAPI, Uvicorn, Pydantic v2, pydantic-settings, pandas, pyarrow,
 
 ## Current stage
 
-Chapter 4 — deterministic graph feature engineering.
+Chapter 5 — deterministic structural role engine.
 
-The ingestion layer validates the parquet files, the graph builder creates a directed `src -> dst` money-flow graph, and feature engineering calculates one metric row per client. Every node is retained, including clients absent from all edges. Roles, database, clusters, and ranking are not implemented yet. `NodeRole` and the schemas define data contracts only; they do not calculate results.
+The pipeline validates parquet files, builds the directed money-flow graph, calculates one feature row per client, and assigns one of the six frozen structural roles. Role score, evidence, database, clusters, and ranking are not implemented yet.
 
 ## Input files
 
@@ -53,6 +53,14 @@ python -m app.analytics.check_features --data-dir ../docs/data
 ```
 
 The feature table contains directed degree, KZT and transaction totals, weighted PageRank, pass-through, seed reach, depth truncation, and percentile signals. `seed_reach_count` includes a seed's zero-length path to itself. Percentiles use average ranks for ties. `pass_through` is `None` when observed incoming value is zero; seed incoming history remains known to be incomplete.
+
+## Assign structural roles
+
+```bash
+python -m app.analytics.check_roles --data-dir ../docs/data
+```
+
+Rules are evaluated in this order: coordinator, consolidator, distributor, transit, terminal, peripheral. Coordinators combine top seed reach and PageRank; consolidators combine high incoming degree and volume; distributors combine high outgoing degree and volume; transit requires observed incoming and outgoing flow with pass-through 0.8–1.2. Seed nodes are excluded from the transit rule. Terminal requires observed incoming flow, zero outgoing degree, and `depth < 4`; depth-four truncation therefore never creates a terminal automatically. Peripheral is the exhaustive fallback. These roles describe graph structure and are analytical hypotheses, not conclusions about guilt.
 
 ## Implementation roadmap
 
