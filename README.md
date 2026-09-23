@@ -1,20 +1,9 @@
-﻿# MoneyGraph — AML Network Analysis
+# MoneyGraph
 
-Frontend MVP foundation for the analyst workspace. This chapter includes the shared layout, navigation, GID search routing, mock overview metrics, and placeholder pages. Graph rendering and backend requests are reserved for later chapters.
+The project is organized into three directories:
 
-## Run locally
+- [backend](backend/README.md) — FastAPI application and dataset validation.
+- [frontend](frontend/README.md) — analyst interface built with React and Vite.
+- [docs](docs/) — hackathon documentation, starter code, and sample data.
 
-Requires Node.js 20.19+ or 22.12+.
-
-```bash
-npm install
-npm run dev
-```
-
-Open the local URL printed by Vite. To check the production build:
-
-```bash
-npm run build
-```
-
-`VITE_API_URL` can be set in a local `.env` file. See `.env.example`; no API requests are made in this chapter.
+Run backend commands from `backend/` and frontend commands from `frontend/`.
